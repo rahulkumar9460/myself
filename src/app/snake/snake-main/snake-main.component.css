@@ -1,0 +1,14 @@
+.grid-row {
+    display: flex;
+    justify-content: center;
+}
+
+.grid-element {
+    background-color: red;
+    border: 1px solid black;
+    margin: 0;
+}
+
+.snake {
+    background-color: yellow;
+}
