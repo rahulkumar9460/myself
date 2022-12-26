@@ -56,6 +56,7 @@ export class SnakeMainComponent implements OnInit {
   snake: Array<snake_body> = [];
   snakeSet: Set<string> = new Set();
   snakeSpeed: number = 80;
+  lastTraveledByTail: snake_body = {x: 0, y: 0};
   initialLengthOfSnake: number = 10;
   inputDirection: string = 'left';
   food: food = {x:0, y:0};
@@ -120,12 +121,19 @@ export class SnakeMainComponent implements OnInit {
   }
 
   isSnakeBody(x: number, y: number) {
-    if(this.snakeSet.has(x + '_' + y)) {
+    if(this.isSnakeHead(x, y)) {
+      return false;
+    } else if(this.snakeSet.has(x + '_' + y)) {
       //console.log(this.snakeSet, x, y);
       return true;
     } else {
       return false;
     }
+  }
+
+  isSnakeHead(x: number, y:number) {
+    if(this.snake[0].x == x && this.snake[0].y == y) return true;
+    else return false;
   }
 
   changeInputDirection(dir: string) {
@@ -168,6 +176,7 @@ export class SnakeMainComponent implements OnInit {
     let newHead = this.calculateNewHead(dir);
     //if head reaches to a food location
     if(newHead.x == this.food.x && newHead.y == this.food.y) {
+      this.addNodeToSnakeTail();
       this.insertFood();
     }
     if(this.isGameOverFun(newHead.x, newHead.y)) {
@@ -218,9 +227,16 @@ export class SnakeMainComponent implements OnInit {
     this.snakeSet.delete(last.x + '_' + last.y);
     this.snake.splice(-1);
 
+    this.lastTraveledByTail = last;
+
     this.snakeSet.add(newHead.x + '_' + newHead.y);
     this.snake.unshift(newHead);
     //console.log(this.snake);
+  }
+
+  addNodeToSnakeTail() {
+    this.snake.push(this.lastTraveledByTail);
+    this.snakeSet.add(this.lastTraveledByTail.x + '_' + this.lastTraveledByTail.y);
   }
 
   ifInGrid(x: number, y: number) {

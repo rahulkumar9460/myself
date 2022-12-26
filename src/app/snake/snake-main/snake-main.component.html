@@ -1,14 +1,17 @@
 <app-top-nav></app-top-nav>
 <!-- <button mat-raised-button color="accent">Accent</button> -->
 
-<div>
-    <div *ngFor="let i of height_iterator" class="grid-row">
-        <div *ngFor="let j of width_iterator; let rm = index" 
-            class="grid-element" 
-            [ngStyle]="{'width': gridElementSize+'px', 'height': gridElementSize+'px'}"
-            [ngClass]="[i+'_'+j]"
-            [ngClass]="isSnakeBody(j, i) ? 'snake': ''"
-            [ngClass]="isFood(j, i)? 'food' : ''"></div> 
+<div class="d-flex justify-content-center">
+    <div>
+        <div *ngFor="let i of height_iterator" class="grid-row">
+            <div *ngFor="let j of width_iterator; let rm = index" 
+                class="grid-element" 
+                [ngStyle]="{'width': gridElementSize+'px', 'height': gridElementSize+'px'}"
+                [ngClass]="[i+'_'+j]"
+                [ngClass]="isSnakeHead(j, i) ? 'snakeHead' : ''"
+                [ngClass]="isSnakeBody(j, i) ? 'snakeBody': ''"
+                [ngClass]="isFood(j, i)? 'food' : ''"></div> 
+        </div>
     </div>
 </div>
 

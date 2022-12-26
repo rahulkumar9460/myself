@@ -1,19 +1,36 @@
 .grid-row {
     display: flex;
     justify-content: center;
+    background-color: black;
 }
 
 .grid-element {
-    background-color: red;
-    border: 1px solid black;
-    border-radius: 2px;
+    background-color: black;
+    /*border: 1px solid black;
+    border-radius: 2px;*/
     margin: 0;
-}
-
-.snake {
-    background-color: yellow;
 }
 
 .food {
     background-color: rgb(116, 215, 35);
+    background-image: url("../../../assets/watermelon.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+}
+
+.snakeBody {
+    background-color: yellow;
+    background-image: url("../../../assets/snake_body.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 35%;
+}
+
+.snakeHead {
+    background-color: rgb(143, 143, 29);
+    background-image: url("../../../assets/snake_head.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 30%;
 }
