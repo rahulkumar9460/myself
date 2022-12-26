@@ -13,7 +13,12 @@
 
 <div>
     <div class="d-flex justify-content-center mb-2">
-    <button mat-raised-button color="accent" (click)="changeInputDirection('up')">Up</button>
+        <button mat-raised-button color="accent" *ngIf="isGameOver" (click)="startGame()">Start</button>
+        <button mat-raised-button color="accent" *ngIf="!isGameOver && isGameRunning" (click)="pauseGame()">Pause</button>
+        <button mat-raised-button color="accent" *ngIf="!isGameOver && !isGameRunning" (click)="resumeGame()">Resume</button>
+    </div>
+    <div class="d-flex justify-content-center mb-2">
+        <button mat-raised-button color="accent" (click)="changeInputDirection('up')">Up</button>
     </div>
     <div class="d-flex justify-content-center mb-2">
         <button mat-raised-button color="accent" (click)="changeInputDirection('left')">Left</button>
