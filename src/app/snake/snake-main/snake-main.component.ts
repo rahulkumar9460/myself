@@ -15,6 +15,11 @@ interface snake_body {
   y: number
 }
 
+interface food {
+  x: number,
+  y: number
+}
+
 @Component({
   selector: 'app-snake-main',
   templateUrl: './snake-main.component.html',
@@ -53,6 +58,7 @@ export class SnakeMainComponent implements OnInit {
   snakeSpeed: number = 80;
   initialLengthOfSnake: number = 10;
   inputDirection: string = 'left';
+  food: food = {x:0, y:0};
 
   isGameOver: boolean = false;
   isGameRunning: boolean = false;
@@ -133,6 +139,24 @@ export class SnakeMainComponent implements OnInit {
     }
   }
 
+  insertFood() {
+    let success = false;
+    while(!success) {
+      let i =  Math.floor(Math.random() * this.grid.height);
+      let j =  Math.floor(Math.random() * this.grid.width);
+
+      if(!this.isSnakeBody(j, i)){
+        this.food = {x:j, y: i};
+        success = true;
+      }
+    }
+  }
+
+  isFood(x: number, y: number) {
+    if(this.food.x == x && this.food.y == y) return true;
+    else return false;
+  }
+
   isAValidInputDir(dir: string) {
     //console.log("Check if inputDir is valid or not... ");
     if(this.inputDirection == dir) return false;
@@ -142,6 +166,10 @@ export class SnakeMainComponent implements OnInit {
 
   moveSnake(dir: string) {
     let newHead = this.calculateNewHead(dir);
+    //if head reaches to a food location
+    if(newHead.x == this.food.x && newHead.y == this.food.y) {
+      this.insertFood();
+    }
     if(this.isGameOverFun(newHead.x, newHead.y)) {
       return;
     } else {

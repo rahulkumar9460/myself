@@ -13,3 +13,7 @@
 .snake {
     background-color: yellow;
 }
+
+.food {
+    background-color: rgb(116, 215, 35);
+}
