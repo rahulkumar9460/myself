@@ -1,3 +1,13 @@
+.main-body {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.grid-box {
+    position: absolute
+}
+
 .grid-row {
     display: flex;
     justify-content: center;
@@ -19,6 +29,13 @@
     border-radius: 50%;
 }
 
+.wall {
+    background-color: brown;
+    background-image: url("../../../assets/wall_3.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .snakeBody {
     background-color: yellow;
     background-image: url("../../../assets/snake_body.jpg");
@@ -33,4 +50,13 @@
     background-repeat: no-repeat;
     background-size: cover;
     border-radius: 30%;
+}
+
+.game-over-box {
+    width: 300px;
+    height: 150px;
+    z-index: 10;
+    margin-top: 20%;
+    background-color: rgba(39, 36, 36, 0.363);
+    color: white;
 }

@@ -55,19 +55,25 @@ export class SnakeMainComponent implements OnInit {
 
   snake: Array<snake_body> = [];
   snakeSet: Set<string> = new Set();
-  snakeSpeed: number = 80;
+  wallSet: Set<string> = new Set();
+  snakeSpeed: number = 100;
   lastTraveledByTail: snake_body = {x: 0, y: 0};
   initialLengthOfSnake: number = 10;
   inputDirection: string = 'left';
   food: food = {x:0, y:0};
 
+  levels: Array<number> = [1, 2, 3, 4];
+  level: number = 1;
+  score: number = 0;
+
   isGameOver: boolean = false;
-  isGameRunning: boolean = false;
+  isGameStarted: boolean = false;
+  isGamePaused: boolean = false;
   interval: any = null;
 
   ngOnInit(): void {
     //console.log(window.innerHeight, window.innerWidth, this.grid.height, this.grid.width, this.gridElementSize);
-    this.startGame();
+    this.initGrid();
   }
 
   fillHeightAndWidthIterators() {
@@ -77,27 +83,50 @@ export class SnakeMainComponent implements OnInit {
 
   }
 
+  initGrid() {
+    this.fillHeightAndWidthIterators();
+    this.initSnake();
+    this.insertFood();
+    //this.showDummySnake();
+  }
+
+  showDummySnake() {
+    let i = 0;
+    this.interval = setInterval(() => {
+      //let num =  Math.floor(Math.random() * this.directions.length);
+      if(i == this.initialLengthOfSnake) {
+        clearInterval(this.interval);
+      } else {
+        i++;
+        this.moveSnake(this.inputDirection);
+      }
+    }, this.snakeSpeed);
+  }
+
   startGame() {
     console.log("game starting");
     this.isGameOver = false;
+    this.isGameStarted = true;
+    this.isGamePaused = false;
     this.interval = null;
     this.inputDirection = 'left';
-    this.fillHeightAndWidthIterators();
+    this.score = 0;
     this.initSnake();
+    this.insertFood();
     this.resumeGame();
   }
 
   pauseGame() {
-    this.isGameRunning = false;
+    this.isGamePaused = true;
     clearInterval(this.interval);
   }
 
   resumeGame() {
     //console.log("Resuming game");
-    this.isGameRunning = true;
+    this.isGamePaused = false;
     this.interval = setInterval(() => {
       //let num =  Math.floor(Math.random() * this.directions.length);
-      if(this.isGameOver || !this.isGameRunning) {
+      if(this.isGameOver || !this.isGameStarted || this.isGamePaused) {
         clearInterval(this.interval);
       } else {
         this.moveSnake(this.inputDirection);
@@ -131,6 +160,14 @@ export class SnakeMainComponent implements OnInit {
     }
   }
 
+  isWall(x: number, y: number) {
+    if(this.wallSet.has(x + '_' + y)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   isSnakeHead(x: number, y:number) {
     if(this.snake[0].x == x && this.snake[0].y == y) return true;
     else return false;
@@ -153,7 +190,7 @@ export class SnakeMainComponent implements OnInit {
       let i =  Math.floor(Math.random() * this.grid.height);
       let j =  Math.floor(Math.random() * this.grid.width);
 
-      if(!this.isSnakeBody(j, i)){
+      if(!this.isSnakeBody(j, i) && !this.isWall(j, i)){
         this.food = {x:j, y: i};
         success = true;
       }
@@ -176,6 +213,7 @@ export class SnakeMainComponent implements OnInit {
     let newHead = this.calculateNewHead(dir);
     //if head reaches to a food location
     if(newHead.x == this.food.x && newHead.y == this.food.y) {
+      this.score++;
       this.addNodeToSnakeTail();
       this.insertFood();
     }
@@ -188,14 +226,18 @@ export class SnakeMainComponent implements OnInit {
 
   isGameOverFun(x: number, y: number) {
     //console.log("Checking if game is over...");
-    if (this.isSnakeBody(x, y)){
+    if (this.isSnakeBody(x, y) || this.isWall(x, y)){
       console.log("Game over!!!!!!!!!!");
       //console.log(this.snakeSet, x, y);
-      this.isGameOver = true;
-      this.isGameRunning = false;
+      this.onGameOver();
       return true;
     }
     return false;
+  }
+
+  onGameOver() {
+    this.isGameOver = true;
+    this.isGameStarted = false;
   }
 
   calculateNewHead(dir: string) {
@@ -242,6 +284,55 @@ export class SnakeMainComponent implements OnInit {
   ifInGrid(x: number, y: number) {
     if (x < 0 || x >= this.grid.width || y < 0 || y >= this.grid.height) return false;
     return true;
+  }
+
+  changeGameLevel(level: number) {
+    if(this.isGameStarted) return;
+    else {
+      this.level = level;
+      this.initLevel(level);
+    }
+  }
+
+  goHome() {
+    this.isGameOver = false;
+    this.isGameStarted = false;
+    this.isGamePaused = false;
+    this.initSnake();
+    //this.showDummySnake();
+  }
+
+  initLevel(level: number) {
+    this.wallSet = new Set();
+    if(level >= 2) {
+      for(let i=0; i<this.grid.height; i++){
+        this.wallSet.add(0 + '_' + i);
+        this.wallSet.add(this.grid.width-1 + '_' + i);
+      }
+      for(let i=0; i<this.grid.width; i++){
+        this.wallSet.add(i + '_' + 0);
+        this.wallSet.add(i + '_' + (this.grid.height-1));
+      }
+    }
+    if(level >= 3) {
+      let a = Math.floor(this.grid.width/4);
+      let b = Math.floor(this.grid.height/3);
+      let len = Math.floor(this.grid.width/2);
+
+      for(let i=a; i-a<len; i++) {
+        this.wallSet.add(i+'_'+(b));
+        this.wallSet.add(i+'_'+(this.grid.height-b));
+      }
+    }
+    if(level >=4) {
+      let a = Math.floor(this.grid.width/2);
+      for(let i=2; i<this.grid.height-2; i++) {
+        this.wallSet.add(a + '_' + i);
+      }
+      this.wallSet.delete(a + '_' + (Math.floor(this.grid.height/2)));
+    }
+    
+    return;
   }
 
 }

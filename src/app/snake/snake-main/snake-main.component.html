@@ -1,8 +1,17 @@
 <app-top-nav></app-top-nav>
 <!-- <button mat-raised-button color="accent">Accent</button> -->
 
-<div class="d-flex justify-content-center">
-    <div>
+<div class="main-body">
+    <div class="grid-box">
+        <div class="d-flex justify-content-around mb-2">
+            <button mat-raised-button color="accent" (click)="goHome()">Home</button>
+            <button mat-raised-button color="accent" *ngIf="!isGameStarted" (click)="startGame()">Start</button>
+            <button mat-raised-button color="accent" *ngIf="isGameStarted && !isGameOver && !isGamePaused" (click)="pauseGame()">Pause</button>
+            <button mat-raised-button color="accent" *ngIf="isGameStarted && isGamePaused" (click)="resumeGame()">Resume</button>
+
+            <button mat-raised-button color="accent" [matMenuTriggerFor]="levelMenu">Level {{ level }}</button>
+            <button mat-raised-button color="accent" class="ml-auto">score {{ score }}</button>
+        </div>
         <div *ngFor="let i of height_iterator" class="grid-row">
             <div *ngFor="let j of width_iterator; let rm = index" 
                 class="grid-element" 
@@ -10,17 +19,23 @@
                 [ngClass]="[i+'_'+j]"
                 [ngClass]="isSnakeHead(j, i) ? 'snakeHead' : ''"
                 [ngClass]="isSnakeBody(j, i) ? 'snakeBody': ''"
+                [ngClass]="isWall(j, i) ? 'wall': ''"
                 [ngClass]="isFood(j, i)? 'food' : ''"></div> 
+        </div>
+    </div>
+
+    <div class="game-over-box" *ngIf="isGameOver">
+        <div class="d-flex justify-content-center mt-4">
+            Game Over
+        </div>
+        <div class="d-flex justify-content-around mt-4">
+            <button mat-raised-button color="accent" (click)="startGame()">Play again</button>
+            <button mat-raised-button color="accent" (click)="goHome()">Home</button>
         </div>
     </div>
 </div>
 
-<div>
-    <div class="d-flex justify-content-center mb-2">
-        <button mat-raised-button color="accent" *ngIf="isGameOver" (click)="startGame()">Start</button>
-        <button mat-raised-button color="accent" *ngIf="!isGameOver && isGameRunning" (click)="pauseGame()">Pause</button>
-        <button mat-raised-button color="accent" *ngIf="!isGameOver && !isGameRunning" (click)="resumeGame()">Resume</button>
-    </div>
+<!-- <div>
     <div class="d-flex justify-content-center mb-2">
         <button mat-raised-button color="accent" (click)="changeInputDirection('up')">Up</button>
     </div>
@@ -31,4 +46,9 @@
     <div class="d-flex justify-content-center">
         <button mat-raised-button color="accent" (click)="changeInputDirection('down')">Down</button>
     </div>
-</div>
+</div> -->
+
+
+<mat-menu #levelMenu="matMenu">
+  <button mat-menu-item *ngFor="let level of levels" (click)="changeGameLevel(level)">{{ level }}</button>
+</mat-menu>
